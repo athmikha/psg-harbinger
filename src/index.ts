@@ -5,7 +5,7 @@ import { acceptReportAndUpdateStatus } from '../routes/reportRoutes';
 dotenv.config();
 
 const app: Express = express();
-const port = 8002
+const port = 8084
 ;
 
 app.get('/', (req: Request, res: Response) => {

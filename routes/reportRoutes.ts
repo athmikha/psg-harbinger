@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
-
+const statuss='';
 async function sendReportAcceptedNotification(userId: number, reportId: number): Promise<void> {
   try {
     // Fetch user details
@@ -24,12 +24,16 @@ async function sendReportAcceptedNotification(userId: number, reportId: number):
     if (!report) {
       throw new Error('Report not found');
     }
+    const progressStep = await prisma.progressStep.findFirst({
+        where: { reportId },
+      }); 
+    
 
         const newNotification = await prisma.notification.create({
           data: {
             
             content: {
-              message: 'Your report has been accepted.',
+                message: `Your report has been ${progressStep?.status}.`,
               reportId: reportId, 
             },
             createdAt: new Date(), 
@@ -58,12 +62,13 @@ async function updateReportStatus(reportId: number): Promise<void> {
     console.log(reportId,"\n\n\n")
     // Update the report status to 'ACCEPTED'
     const updatedReport = await prisma.progressStep.update({
-      where: { reportId:reportId, status: 'DECLINED' }, 
+      where: { id:reportId}, 
       data: {
         
         status: 'ACCEPTED',
       },
     });
+
 
     console.log(`Report ${reportId} status updated to 'ACCEPTED'.`);
 
@@ -100,3 +105,4 @@ export async function acceptReportAndUpdateStatus(req: Request, res: Response): 
       res.status(500).json({ error: 'An error occurred while processing the request.' });
     }
   }
+

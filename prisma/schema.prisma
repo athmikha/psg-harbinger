@@ -7,25 +7,13 @@ generator client {
  provider = "prisma-client-js"
 }
 
-model Report {
-  reportId           Int      @id @unique
-  content     Json
-  departmentId String      
-  department  Department @relation(fields: [departmentId], references: [departmentId])
-  createdAt DateTime @default(now())
-  assignedReports AssignedReports[] @relation
-  progressSteps ProgressStep[]
-  
-}
-
 model Department {
   departmentId           String     @id @unique
   deadline DateTime
   representative User?
   createdAt   DateTime @default(now())
   reports    Report[]   @relation
-  }
-
+}
 
 model ReportStage {
   id           Int        @id 
@@ -49,49 +37,33 @@ enum ProgressStepStatus {
   AWAITING
 }
 
-
+model Report {
+  reportId    Int      @id @unique
+  content     Json
+  departmentId String      
+  department  Department @relation(fields: [departmentId], references: [departmentId])
+  createdAt DateTime @default(now())
+  assignedReports AssignedReports[] @relation
+  progressSteps ProgressStep[]
+  quater         String
+}
 
 model AssignedReports {
-  id           Int        @id 
+  id           Int   @id 
   userId       Int
-  user         AssignedReportUser[]
-  reportId    Int
-  report     Report    @relation(fields: [reportId], references: [reportId])
+  userS      User[]    
+  reportId      Int
+  reports    Report[]     
   createdAt DateTime @default(now())
 }
 
-model AssignedReportUser {
-  userId Int
-  user        User @relation(fields: [userId], references: [employeeld])
-  assignedReportId Int
-  assignedReport AssignedReports @relation(fields: [assignedReportId], references: [id])
-  createdAt DateTime @default(now())
-  @@id([userId,assignedReportId])
-}
 model User {
   
   employeeld  Int       @id @unique
   role         String
   department String @unique
   deptId Department @relation(fields: [department],references: [departmentId])
-  assignedReports AssignedReportUser[] 
-  notifications    NotificationUser[]
+  assignedReports AssignedReports[] 
   
 }
 
-model Notification {
-  id       Int       @id @default(autoincrement())
-  content   Json
-  users     NotificationUser[] 
-  createdAt         DateTime  @default(now())
-
-  
-}
-
-model NotificationUser {
-  id            Int          @id @default(autoincrement())
-  user          User         @relation(fields: [userId], references: [employeeld])
-  userId        Int
-  notification  Notification @relation(fields: [notificationId], references: [id])
-  notificationId Int
-}
