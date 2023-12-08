@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 
 const prisma = new PrismaClient();
-const statuss='';
+
 async function sendReportAcceptedNotification(userId: number, reportId: number): Promise<void> {
   try {
     // Fetch user details

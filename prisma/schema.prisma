@@ -8,11 +8,11 @@ generator client {
 }
 
 model Department {
-  departmentId           String     @id @unique
+  departmentId           String     @id 
   deadline DateTime
   representative User?
   createdAt   DateTime @default(now())
-  reports    Report[]   @relation
+  reports    Report[]   
 }
 
 model ReportStage {
@@ -59,7 +59,7 @@ model AssignedReports {
 
 model User {
   
-  employeeld  Int       @id @unique
+  employeeld  Int       @id 
   role         String
   department String @unique
   deptId Department @relation(fields: [department],references: [departmentId])
