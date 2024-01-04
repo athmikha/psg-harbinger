@@ -1,69 +1,58 @@
 datasource db {
- provider = "mysql"
- url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 generator client {
- provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Department {
-  departmentId           String     @id 
-  deadline DateTime
-  representative User?
-  createdAt   DateTime @default(now())
-  reports    Report[]   
-}
+  id       String    @id
+  name     String?
+  deadline DateTime?
 
-model ReportStage {
-  id           Int        @id 
-  stage       String
-  reportId    Int
-  createdAt   DateTime @default(now())
+  reports Report[]
+  users   User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProgressStep {
-  id           Int        @id 
-  status       ProgressStepStatus    @unique  
-  currentStage Int         @unique
-  reportId    Int
-  report      Report    @relation(fields: [reportId], references: [reportId])
-  createdAt   DateTime @default(now())
-}
-
-enum ProgressStepStatus {
-  ACCEPTED
-  DECLINED
-  AWAITING
+  id           Int    @id @default(autoincrement())
+  status       String
+  currentStage Int
+  comment      String?
+  reportId Int    @unique
+  report   Report? @relation(fields: [reportId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Report {
-  reportId    Int      @id @unique
-  content     Json
-  departmentId String      
-  department  Department @relation(fields: [departmentId], references: [departmentId])
-  createdAt DateTime @default(now())
-  assignedReports AssignedReports[] @relation
-  progressSteps ProgressStep[]
-  quater         String
-}
+  id      Int     @id @default(autoincrement())
+  content Json?
+  quater  String?
+  stage   String
 
-model AssignedReports {
-  id           Int   @id 
-  userId       Int
-  userS      User[]    
-  reportId      Int
-  reports    Report[]     
+  departmentId  String?
+  department    Department?    @relation(fields: [departmentId], references: [id])
+  assignedUsers User[]
+  progressSteps ProgressStep[]
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
-  
-  employeeld  Int       @id 
-  role         String
-  department String @unique
-  deptId Department @relation(fields: [department],references: [departmentId])
-  assignedReports AssignedReports[] 
-  
-}
+  employeeId String @id
+  role       String
 
+  department      Department? @relation(fields: [departmentId], references: [id])
+  departmentId    String?
+  assignedReports Report[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
